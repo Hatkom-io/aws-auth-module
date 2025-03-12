@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
   SetMetadata,
 } from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import { isPublicKey } from './constants'
@@ -34,9 +35,16 @@ const getRequest = <T>(context: ExecutionContext): T => {
 export class AuthGuard<U extends object, C extends AuthContext<U>>
   implements CanActivate
 {
-  constructor(private readonly authService: AuthService<U>) {}
+  constructor(
+    private readonly authService: AuthService<U>,
+    private readonly reflector: Reflector,
+  ) {}
 
   canActivate = async (context: ExecutionContext): Promise<boolean> => {
+    if (this.reflector.get<boolean>(isPublicKey, context.getHandler())) {
+      return true
+    }
+
     const request = getRequest<C>(context)
     const token = request.headers.authorization
 
