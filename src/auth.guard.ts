@@ -1,10 +1,8 @@
 import {
   CanActivate,
-  CustomDecorator,
   ExecutionContext,
   Injectable,
   InternalServerErrorException,
-  SetMetadata,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { GqlExecutionContext } from '@nestjs/graphql'
@@ -41,28 +39,23 @@ export class AuthGuard<U extends object, C extends AuthContext<U>>
   ) {}
 
   canActivate = async (context: ExecutionContext): Promise<boolean> => {
-    if (this.reflector.get<boolean>(isPublicKey, context.getHandler())) {
-      return true
-    }
-
+    const isPublic = this.reflector.get<boolean>(
+      isPublicKey,
+      context.getHandler(),
+    )
     const request = getRequest<C>(context)
     const token = request.headers.authorization
 
-    if (!token) {
-      return false
+    if (token && !request.user) {
+      request.user = await this.authService.validateToken(
+        token.replace('Bearer ', ''),
+      )
     }
 
-    if (request.user) {
+    if (isPublic) {
       return true
     }
-
-    request.user = await this.authService.validateToken(
-      token.replace('Bearer ', ''),
-    )
 
     return !!request.user
   }
 }
-
-export const Public = (): CustomDecorator<string> =>
-  SetMetadata(isPublicKey, true)

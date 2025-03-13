@@ -1,5 +1,11 @@
-import { ExecutionContext, createParamDecorator } from '@nestjs/common'
+import {
+  CustomDecorator,
+  ExecutionContext,
+  SetMetadata,
+  createParamDecorator,
+} from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
+import { isPublicKey } from './constants'
 import { AuthContext } from './types'
 
 export const GetUser = createParamDecorator(
@@ -8,3 +14,6 @@ export const GetUser = createParamDecorator(
       req: AuthContext<U>
     }>().req.user,
 )
+
+export const Public = (): CustomDecorator<string> =>
+  SetMetadata(isPublicKey, true)
