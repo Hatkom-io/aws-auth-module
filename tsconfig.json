@@ -5,7 +5,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "CommonJS",
-    "baseUrl": "./",
+    "rootDir": "./",
     "resolveJsonModule": true,
     "declaration": true,
     "sourceMap": true,
