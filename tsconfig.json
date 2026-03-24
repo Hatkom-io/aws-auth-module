@@ -5,7 +5,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "CommonJS",
-    "rootDir": "./",
+    "rootDir": "./src",
     "resolveJsonModule": true,
     "declaration": true,
     "sourceMap": true,
@@ -20,5 +20,6 @@
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src/**/*"]
 }
